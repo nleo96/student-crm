@@ -11,7 +11,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}",
             "env": {
-                "PORT": "8080",
+                "PORT": "8090",
                 "DB_HOST": "localhost",
                 "DB_PORT": "5432",
                 "DB_NAME": "crm",
