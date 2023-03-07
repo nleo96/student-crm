@@ -49,6 +49,21 @@ func (u UserService) Authenticate(
 	return user, nil
 }
 
+func (u UserService) SignUp(user *models.User) (*models.User, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(user.Password),
+		14,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	user.Password = string(hashedPassword)
+	return u.repository.Create(user)
+
+}
+
 func NewUserService(repository *repositories.UserRepository) *UserService {
 	service := &UserService{repository: repository}
 	return service

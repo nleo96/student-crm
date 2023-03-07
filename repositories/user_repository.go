@@ -31,6 +31,14 @@ func (u UserRepository) FindByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
+func (u UserRepository) Create(user *models.User) (*models.User, error) {
+
+	result := u.database.Create(user)
+	result.Scan(user)
+
+	return user, result.Error
+}
+
 func NewUserRepository(database *gorm.DB) *UserRepository {
 	return &UserRepository{database: database}
 }

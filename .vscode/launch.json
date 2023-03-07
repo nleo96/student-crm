@@ -11,6 +11,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}",
             "env": {
+                "HOST": "localhost",
                 "PORT": "8090",
                 "DB_HOST": "localhost",
                 "DB_PORT": "5432",
