@@ -56,7 +56,11 @@ func (u UserService) SignUp(user *models.User) (*models.User, error) {
 	)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(
+			"%w: %v",
+			failures.ErrPasswordHashGeneration,
+			err,
+		)
 	}
 
 	user.Password = string(hashedPassword)

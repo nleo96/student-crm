@@ -72,7 +72,7 @@ func (u UserController) SignUp(context *gin.Context) {
 	err := context.ShouldBindJSON(user)
 
 	if err != nil {
-		utils.HandleBadRequestError(context, err)
+		utils.HandleInvalidRequest(context, err)
 		return
 	}
 

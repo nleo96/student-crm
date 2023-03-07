@@ -18,25 +18,30 @@ func (u UserRepository) FindByEmail(email string) (*models.User, error) {
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
-			return nil, fmt.Errorf(
-				"%w: %v",
-				failures.ErrNotFound,
-				result.Error,
-			)
+			return nil, failures.ErrDataNotFound.Wrap(result.Error)
+		} else {
+			return nil, failures.ErrDatabaseOperation.Wrap(result.Error)
 		}
-
-		return nil, result.Error
 	}
 
 	return &user, nil
 }
 
 func (u UserRepository) Create(user *models.User) (*models.User, error) {
-
 	result := u.database.Create(user)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf(
+			"%w: %v",
+			failures.ErrPasswordHashGeneration,
+			result.Error,
+		)
+
+	}
+
 	result.Scan(user)
 
-	return user, result.Error
+	return user, nil
 }
 
 func NewUserRepository(database *gorm.DB) *UserRepository {
