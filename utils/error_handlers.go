@@ -2,48 +2,61 @@ package utils
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
 
+type FieldValidationError struct {
+	Code      string `json:"code"`
+	Message   string `json:"message"`
+	MinLength int    `json:"minLength,omitempty"`
+	MaxLength int    `json:"maxLength,omitempty"`
+}
+
 func HandleInvalidRequest(context *gin.Context, err error) {
 	var validations validator.ValidationErrors
 
 	if errors.As(err, &validations) {
-		var failures map[string][]string = make(map[string][]string)
+		failures := make(map[string]*FieldValidationError)
 		for _, validation := range validations {
-			var message string
-			switch validation.Tag() {
-			case "required":
-				message = "is mandatory"
+			fieldName := validation.Field()
+			fieldValidation, ok := failures[fieldName]
 
-			case "email":
-				message = "must be a valid email address"
-
-			case "min":
-				message = fmt.Sprintf(
-					"the length or value must be at least %s",
-					validation.Param(),
-				)
-
-			case "max":
-				message = fmt.Sprintf(
-					"the length or value must be a maximum of %s",
-					validation.Param(),
-				)
+			if !ok {
+				fieldValidation = &FieldValidationError{}
+				failures[fieldName] = fieldValidation
 			}
 
-			fieldName := validation.Field()
-			failures[fieldName] = append(failures[fieldName], message)
+			switch validation.Tag() {
+			case "required":
+				fieldValidation.Message = "This field is required"
+				fieldValidation.Code = "REQ"
+
+			case "email":
+				fieldValidation.Message = "This field must be a valid email address"
+				fieldValidation.Code = "INV"
+
+			case "min":
+				fieldValidation.Message = "This field must have at least x of length"
+				fieldValidation.Code = "MIN"
+				fieldValidation.MinLength, _ = strconv.Atoi(validation.Param())
+
+			case "max":
+				fieldValidation.Message = "This field must have x of maximum length"
+				fieldValidation.Code = "MAX"
+				fieldValidation.MaxLength, _ = strconv.Atoi(validation.Param())
+			}
+
 		}
 
 		context.AbortWithStatusJSON(
 			http.StatusBadRequest,
 			JSON{"errors": failures},
 		)
+		return
 	}
 
 	context.AbortWithStatusJSON(
