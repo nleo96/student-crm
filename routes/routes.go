@@ -2,6 +2,7 @@ package routes
 
 import (
 	"open-crm-api/controllers"
+	"open-crm-api/middlewares"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -11,6 +12,7 @@ import (
 func SetupRouter(provider *dig.Container) *gin.Engine {
 	router := gin.Default()
 	router.Use(cors.Default())
+	router.Use(middlewares.HandleErrors)
 
 	AttachUserRoutes(provider, router)
 

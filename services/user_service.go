@@ -1,13 +1,12 @@
 package services
 
 import (
-	"errors"
-	"fmt"
-	"open-crm-api/failures"
+	"open-crm-api/errors"
 	"open-crm-api/models"
 	"open-crm-api/repositories"
 
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type UserService struct {
@@ -23,12 +22,8 @@ func (u UserService) Authenticate(
 	user, err = u.repository.FindByEmail(credentials.UserName)
 
 	if err != nil {
-		if errors.Is(err, failures.ErrNotFound) {
-			return nil, fmt.Errorf(
-				"%w: %v",
-				failures.ErrInvalidCredentials,
-				err,
-			)
+		if errors.Is(errors.Unwrap(err), gorm.ErrRecordNotFound) {
+			return nil, errors.ErrInvalidCredentials.Wrap(err)
 		}
 		return nil, err
 	}
@@ -39,11 +34,7 @@ func (u UserService) Authenticate(
 	)
 
 	if err != nil {
-		return nil, fmt.Errorf(
-			"%w: %v",
-			failures.ErrInvalidCredentials,
-			err,
-		)
+		return nil, errors.ErrInvalidCredentials.Wrap(err)
 	}
 
 	return user, nil
@@ -56,11 +47,7 @@ func (u UserService) SignUp(user *models.User) (*models.User, error) {
 	)
 
 	if err != nil {
-		return nil, fmt.Errorf(
-			"%w: %v",
-			failures.ErrPasswordHashGeneration,
-			err,
-		)
+		return nil, errors.ErrHashing.Wrap(err)
 	}
 
 	user.Password = string(hashedPassword)

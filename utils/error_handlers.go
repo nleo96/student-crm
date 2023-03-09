@@ -49,7 +49,6 @@ func HandleInvalidRequest(context *gin.Context, err error) {
 				fieldValidation.Code = "MAX"
 				fieldValidation.MaxLength, _ = strconv.Atoi(validation.Param())
 			}
-
 		}
 
 		context.AbortWithStatusJSON(

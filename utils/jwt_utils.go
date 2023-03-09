@@ -2,6 +2,7 @@ package utils
 
 import (
 	"net/http"
+	"open-crm-api/errors"
 	"os"
 	"time"
 
@@ -16,7 +17,12 @@ func GenerateJWT(user int64) (string, error) {
 	claims["iat"] = time.Now().Unix()
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 
-	return token.SignedString([]byte(os.Getenv("TOKEN_SECRET")))
+	var signedToken string
+	var err error
+
+	signedToken, err = token.SignedString([]byte(os.Getenv("TOKEN_SECRET")))
+
+	return signedToken, errors.ErrTokenSigning.Wrap(err)
 }
 
 func GenerateSessionCookie(token string) *http.Cookie {

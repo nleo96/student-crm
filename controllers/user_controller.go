@@ -1,9 +1,8 @@
 package controllers
 
 import (
-	"errors"
 	"net/http"
-	"open-crm-api/failures"
+	"open-crm-api/errors"
 	"open-crm-api/models"
 	"open-crm-api/services"
 	"open-crm-api/utils"
@@ -21,10 +20,7 @@ func (u UserController) Authenticate(context *gin.Context) {
 	err := context.ShouldBindJSON(&credentials)
 
 	if err != nil {
-		context.AbortWithStatusJSON(
-			http.StatusBadRequest,
-			JSON{"error": err.Error()},
-		)
+		context.Error(errors.ErrDataBind.Wrap(err))
 		return
 	}
 
@@ -32,18 +28,7 @@ func (u UserController) Authenticate(context *gin.Context) {
 	user, err = u.service.Authenticate(&credentials)
 
 	if err != nil {
-		if errors.Is(err, failures.ErrInvalidCredentials) {
-			context.AbortWithStatusJSON(
-				http.StatusUnauthorized,
-				JSON{"error": errors.Unwrap(err).Error()},
-			)
-			return
-		}
-
-		context.AbortWithStatusJSON(
-			http.StatusInternalServerError,
-			JSON{"error": err.Error()},
-		)
+		context.Error(err)
 		return
 	}
 
