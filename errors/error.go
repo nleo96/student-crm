@@ -7,7 +7,7 @@ import (
 type ErrorKind uint
 
 const (
-	ErrKindDatabase = (iota + 1) << 16
+	ErrKindDatabase = (iota + 1) << 32
 	ErrKindDataNotFound
 	ErrKindDataDuplicated
 	ErrKindInvalidCredentials
@@ -17,13 +17,13 @@ const (
 )
 
 var (
-	ErrDatabase           = NewError(ErrKindDatabase, "invalid database operation")
-	ErrDataNotFound       = NewError(ErrKindDataNotFound, "invalid database operation")
-	ErrDataDuplicated     = NewError(ErrKindDataDuplicated, "invalid database operation")
-	ErrInvalidCredentials = NewError(ErrKindInvalidCredentials, "invalid credentials")
-	ErrHashing            = NewError(ErrKindHashing, "invalid credentials")
-	ErrTokenSigning       = NewError(ErrKindTokenSigning, "hash generation error")
-	ErrDataBind           = NewError(ErrKindDataBind, "")
+	ErrDatabase           = NewError(ErrKindDatabase, "There was an error processing your request due to a database issue")
+	ErrDataNotFound       = NewError(ErrKindDataNotFound, "The requested data could not be found. Please check your request parameters and try again.")
+	ErrDataDuplicated     = NewError(ErrKindDataDuplicated, "The record you're trying to add already exists in the system. Please check your request parameters and try again")
+	ErrInvalidCredentials = NewError(ErrKindInvalidCredentials, "Your credentials are invalid. Please check your username and password and try again")
+	ErrHashing            = NewError(ErrKindHashing, "There was an issue processing your request due to an error in hashing data. ")
+	ErrTokenSigning       = NewError(ErrKindTokenSigning, "There was an issue generating your authentication token. Please try again later.")
+	ErrDataBind           = NewError(ErrKindDataBind, "There was an issue processing your request due to an error in binding data. Please check the request data and ensure it is correctly formatted.")
 )
 
 type Error struct {
