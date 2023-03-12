@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"net/http"
 	"open-crm-api/controllers"
 	"open-crm-api/middlewares"
 
@@ -36,6 +37,9 @@ func AttachUserRoutes(provider *dig.Container, router *gin.Engine) {
 	var userController *controllers.UserController
 	provider.Invoke(controllers.GetUserControllerInvoker(&userController))
 
+	router.GET("", func(context *gin.Context) {
+		context.JSON(http.StatusOK, map[string]any{"message": "success"})
+	})
 	routerGroup := router.Group("/user")
 	{
 		routerGroup.POST("/register", userController.SignUp)

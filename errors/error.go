@@ -40,12 +40,16 @@ func (e *Error) Kind() ErrorKind {
 	return e.kind
 }
 
-func (e *Error) Error() string {
+func (e Error) Error() string {
 	return e.message
 }
 
 func (e *Error) Wrap(err error) error {
-	return nil
+	return &Error{
+		kind:    e.kind,
+		message: e.message,
+		err:     err,
+	}
 }
 
 func (e *Error) Unwrap() error {

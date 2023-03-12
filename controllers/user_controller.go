@@ -36,10 +36,7 @@ func (u UserController) Authenticate(context *gin.Context) {
 	token, err = utils.GenerateJWT(int64(user.ID))
 
 	if err != nil {
-		context.AbortWithStatusJSON(
-			http.StatusInternalServerError,
-			JSON{"error": err.Error()},
-		)
+		context.Error(err)
 		return
 	}
 
@@ -57,17 +54,14 @@ func (u UserController) SignUp(context *gin.Context) {
 	err := context.ShouldBindJSON(user)
 
 	if err != nil {
-		utils.HandleInvalidRequest(context, err)
+		context.Error(errors.ErrDataBind.Wrap(err))
 		return
 	}
 
 	user, err = u.service.SignUp(user)
 
 	if err != nil {
-		context.AbortWithStatusJSON(
-			http.StatusInternalServerError,
-			JSON{"error": err.Error()},
-		)
+		context.Error(err)
 		return
 	}
 
