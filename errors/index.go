@@ -14,6 +14,7 @@ const (
 	ErrKindHashing
 	ErrKindTokenSigning
 	ErrKindDataBind
+	ErrInvalidOptionKind
 )
 
 var (
@@ -24,6 +25,7 @@ var (
 	ErrHashing            = NewError(ErrKindHashing, "There was an issue processing your request due to an error in hashing data. ")
 	ErrTokenSigning       = NewError(ErrKindTokenSigning, "There was an issue generating your authentication token. Please try again later.")
 	ErrDataBind           = NewError(ErrKindDataBind, "There was an issue processing your request due to an error in binding data. Please check the request data and ensure it is correctly formatted.")
+	ErrInvalidOption      = NewError(ErrInvalidOptionKind, "Invalid option passed to function context. Try: ScanModeSoft or ScanModeDeep from this package.")
 )
 
 type Error struct {
