@@ -13,6 +13,10 @@ type UserService struct {
 	repository *repositories.UserRepository
 }
 
+func (s UserService) Repository() *repositories.UserRepository {
+	return s.repository
+}
+
 func (u UserService) Authenticate(
 	credentials *models.UserCredentials,
 ) (*models.User, error) {

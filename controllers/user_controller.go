@@ -50,16 +50,15 @@ func (u UserController) Authenticate(context *gin.Context) {
 }
 
 func (u UserController) SignUp(context *gin.Context) {
-	var user *models.User = &models.User{}
-	err := context.ShouldBindJSON(user)
+	user := &models.User{}
 
+	err := context.ShouldBindJSON(user)
 	if err != nil {
 		context.Error(errors.ErrDataBind.Wrap(err))
 		return
 	}
 
 	user, err = u.service.SignUp(user)
-
 	if err != nil {
 		context.Error(err)
 		return

@@ -19,10 +19,13 @@ func SetupProvider() *dig.Container {
 	provider.Provide(routes.SetupRouter)
 
 	provider.Provide(repositories.NewUserRepository)
+	provider.Provide(repositories.NewContactRepository)
 
 	provider.Provide(services.NewUserService)
+	provider.Provide(services.NewContactService)
 
 	provider.Provide(controllers.NewUserController)
+	provider.Provide(controllers.NewContactController)
 
 	return provider
 }

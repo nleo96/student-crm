@@ -36,6 +36,10 @@ func (u ContactRepository) FindByID(
 	}
 
 	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, errors.ErrDataNotFound.Wrap(result.Error)
+		}
+
 		return nil, errors.ErrDatabase.Wrap(result.Error)
 	}
 

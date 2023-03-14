@@ -1,8 +1,6 @@
 package routes
 
 import (
-	"net/http"
-	"open-crm-api/controllers"
 	"open-crm-api/middlewares"
 
 	"github.com/gin-contrib/cors"
@@ -16,6 +14,7 @@ func SetupRouter(provider *dig.Container) *gin.Engine {
 	router.Use(middlewares.HandleErrors)
 
 	AttachUserRoutes(provider, router)
+	AttachContactRoutes(provider, router)
 
 	return router
 }
@@ -31,19 +30,4 @@ func InvokeRouter(provider *dig.Container) *gin.Engine {
 	provider.Invoke(GetRouterInvoker(&router))
 
 	return router
-}
-
-func AttachUserRoutes(provider *dig.Container, router *gin.Engine) {
-	var userController *controllers.UserController
-	provider.Invoke(controllers.GetUserControllerInvoker(&userController))
-
-	router.GET("", func(context *gin.Context) {
-		context.JSON(http.StatusOK, map[string]any{"message": "success"})
-	})
-	routerGroup := router.Group("/user")
-	{
-		routerGroup.POST("/register", userController.SignUp)
-		routerGroup.POST("/login", userController.Authenticate)
-	}
-
 }
